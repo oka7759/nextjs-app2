@@ -1,4 +1,5 @@
 import { NextPage } from "next";
+import Link from "next/link";
 import path from "path";
 import fs from "fs";
 
@@ -14,16 +15,19 @@ const HomePage: NextPage<Props> = ({ products }) => {
   return (
     <ul>
       {products.map((item) => {
-        return <li key={item.id}>{item.title}</li>;
+        return (
+          <li key={item.id}>
+            <Link href={`/${item.id}`}>{item.title}</Link>
+          </li>
+        );
       })}
     </ul>
   );
 };
 
-
 export async function getStaticProps() {
   // 프로젝트 빌드시 실행되어 html을 만듬 이후 작동 안함
-// revalidate 로 html 사전 렌더 주기 설정할수 있음
+  // revalidate 로 html 사전 렌더 주기 설정할수 있음
 
   //목데이터 주소 가져오기
   const filePath = path.join(
@@ -38,22 +42,22 @@ export async function getStaticProps() {
   const data = JSON.parse(jsonData.toString());
 
   // 데이터 없을때 리다이렉ㅌ므
-  if(!data) {
+  if (!data) {
     return {
-      redirect : {
-        destination : '/no-data'
-      }
-    }
+      redirect: {
+        destination: "/no-data",
+      },
+    };
   }
 
-  if(data.products.length === 0){
-    return {notFound: true}
+  if (data.products.length === 0) {
+    return { notFound: true };
   }
   return {
     props: {
       products: data.products,
     },
-    revalidate: 10
+    revalidate: 10,
   };
 }
 
